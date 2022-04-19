@@ -1,37 +1,73 @@
-const loadDog = () => {
-    fetch('https://api.thedogapi.com/v1/breeds')
+// 1. grab the button by onclick
+const searchButton = () => {
+
+    // 2. grab the search field input by ID. 
+    const input = document.getElementById('input-value');
+    const inputValue = parseInt(input.value);
+
+    // 4. grab the error showing UI by id
+    const error = document.getElementById('error');
+
+    // 3. here valid input is only number, so we will validate the input through if condition below:
+
+    if (isNaN(inputValue) || inputValue=="") {//3.5 isNaN check find the value number or  empty string then
+        error.innerText = "*Please Input a Number*"
+        // now empty the input after click the search button
+        input.value = "";
+        main.innerHTML = "";
+    }
+
+    else if (inputValue <= 0) {
+        error.innerText="*Please Input a Positive Number*"
+         // now empty the input after click the search button
+        input.value = "";
+        main.innerHTML = "";
+    }
+    else if (inputValue > 52) {
+        error.innerText="*Please Input a Number below 52*"
+         // now empty the input after click the search button
+        input.value = "";
+        main.innerHTML = "";
+    }
+    
+    else {
+        fetch(`https://deckofcardsapi.com/api/deck/new/draw/?count=${inputValue}`)// here we made the api dynamic by the last code.
         .then(res => res.json())
-        .then(data => displayDog(data));
+            .then(data => cardDisplay(data.cards));// cards is the array under the object and we can catch this array cards from here
+        // now empty the input after click the search button
+        input.value = "";
+        error.innerText = "";
+        main.innerHTML = "";
+
+    }
+ 
 }
 
-const displayDog = (dogList) => {
+
+const cardDisplay = (cards) => {
+    // console.log(cards);
+    // grab the div where we will display the information
     const main = document.getElementById('main');
-    // 1. lets take first 10 data form 172 data set. first declare a variable and through slice we can call first 10 data as follows: if we want to call from 10-20 then dogList.slice(10,20);
-    const first10Data = dogList.slice(0, 100);
-    
-    // 2. now to get element from array of 10 items we will run a for of loop, where variable name is dog: here of s/b dogList but we have created a variable for first 10 dog data (first10Data);
-    for (const dog of first10Data) {
-        // 3. now we will create a div under main div: this new div s/b under the for loop so it will display multiple object data.
 
-        // console.log(dog);
-        const div = document.createElement("div");
+    for (const card of cards) {
+        console.log(card);
+    // here we will create virtual div for the cards
+        const div = document.createElement('div');
 
-        // 6. now we will display the names as column and add a class in js:
+        div.classList.add("col-md-4");
+        div.classList.add("mb-2");
 
-        div.classList = "col-lg-4 g-4";
-
-        // 4. now we will show the data inside the div that we created in line 12 under the main id div as follows under a h2 tag: dynamic display of object is variable.name .
         div.innerHTML = `
-        <img width="300px" height="200px" src=${dog.image.url} class="">
-
-        <h3>${dog.name}</h3>
-        <h5>Origin: ${dog.origin}</h5>
-        <p>Weight: ${dog.weight.imperial}</p>
-        <button>More Info</button>
-
+        <div class="card" style="width: 10rem;">
+                <img src="${card.image}" class="card-img-top" alt="...">
+            <div class="card-body">
+            <h5 class="card-title">${card.suit}</h5>
+            <p class="card-text">${card.value}</p>
+            <button href="#"  class="btn btn-primary">More</button>
+            </div>
+        </div>
         `
-        // 5. now under main ID tag we will append a child-the new div
         main.appendChild(div);
-        
-    }
+
+}
 }
