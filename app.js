@@ -50,7 +50,7 @@ const cardDisplay = (cards) => {
     const main = document.getElementById('main');
 
     for (const card of cards) {
-        console.log(card);
+        // console.log(card);
     // here we will create virtual div for the cards
         const div = document.createElement('div');
 
@@ -63,11 +63,35 @@ const cardDisplay = (cards) => {
             <div class="card-body">
             <h5 class="card-title">${card.suit}</h5>
             <p class="card-text">${card.value}</p>
-            <button href="#"  class="btn btn-primary">More</button>
+            <button onclick="moreInfo('${card.code}')"  class="btn btn-primary">More</button>
             </div>
         </div>
         `
         main.appendChild(div);
 
+    }
 }
+
+const moreInfo = (code) =>{
+    fetch(`https://deckofcardsapi.com/api/deck/new/draw/?count=52`)
+        .then(res => res.json())
+        .then(data => { 
+            const allCards = data.cards;
+            // console.log(allCards);
+            const singleCard = allCards.find(card => card.code === code);
+            const div = document.createElement('div');
+            
+            main.innerHTML = "";
+
+            div.innerHTML = `
+            <div class="card" style="width: 10rem;">
+                <img src="${singleCard.image}" class="card-img-top" alt="...">
+                <div class="card-body">
+                <h5 class="card-title">${singleCard.suit}</h5>
+                <p class="card-text">${singleCard.value}</p>
+                </div>
+            </div>
+            `
+            main.appendChild(div);
+        });
 }
